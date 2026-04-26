@@ -162,7 +162,8 @@ export default function FactoryPage() {
       {/* Content */}
       <div className="p-container-flush">
 
-        <FadeIn className="py-20" style={{ borderBottom: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderBottom: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-20">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>About the game</p>
@@ -176,6 +177,7 @@ export default function FactoryPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
         <FadeIn className="py-16">
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--c-card-border)", background: "var(--c-card-bg)" }}>
@@ -185,7 +187,8 @@ export default function FactoryPage() {
           <p className="text-[10px] font-mono mt-3 tracking-widest uppercase" style={{ color: "var(--c-text-faint)" }}>Lunar workshops — build from ruins</p>
         </FadeIn>
 
-        <FadeIn className="py-16" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-16">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>Gameplay</p>
@@ -202,6 +205,7 @@ export default function FactoryPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
         <FadeIn className="py-16">
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--c-card-border)", background: "var(--c-card-bg)" }}>
@@ -211,7 +215,8 @@ export default function FactoryPage() {
           <p className="text-[10px] font-mono mt-3 tracking-widest uppercase" style={{ color: "var(--c-text-faint)" }}>Production lines — real-time timers</p>
         </FadeIn>
 
-        <FadeIn className="py-16" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-16">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>Workshops</p>
@@ -235,8 +240,10 @@ export default function FactoryPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
-        <FadeIn className="py-16" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-16">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>Architecture</p>
@@ -252,8 +259,10 @@ export default function FactoryPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
-        <FadeIn className="py-16" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-16">
           <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-12 text-center" style={{ color: "var(--c-text-muted)" }}>Demo</p>
           <div className="flex justify-center">
             <div style={{ position: "relative", width: "280px" }}>
@@ -271,8 +280,10 @@ export default function FactoryPage() {
           </div>
           <p className="text-[10px] font-mono text-center mt-8 tracking-widest uppercase" style={{ color: "var(--c-text-faint)" }}>Gameplay demo</p>
         </FadeIn>
+        </div>
 
-        <FadeIn className="pt-20 pb-8" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="pt-20 pb-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <BackButton />
             <a href="https://github.com/rizoshomatov" target="_blank" rel="noopener noreferrer"
@@ -285,6 +296,7 @@ export default function FactoryPage() {
             </a>
           </div>
         </FadeIn>
+        </div>
 
         <div className="h-24" />
       </div>
