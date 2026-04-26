@@ -272,7 +272,7 @@ export default function FactoryPage() {
               <div style={{ background: "linear-gradient(160deg, #52525a 0%, #29292e 50%, #3a3a40 100%)", borderRadius: "42px", padding: "9px", boxShadow: "0 0 0 1px #5a5a5e, 0 2px 0 0 rgba(255,255,255,0.06) inset, 0 40px 100px rgba(0,0,0,0.55)" }}>
                 <div style={{ background: "#000", borderRadius: "34px", overflow: "hidden", aspectRatio: "9 / 19.5", position: "relative", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.07)" }}>
                   <video style={{ position: "absolute", top: "50%", left: "50%", transform: `translate(calc(-50% + ${VIDEO_OFFSET.left}px), calc(-50% + ${VIDEO_OFFSET.top}px))`, width: `calc(100% + ${VIDEO_OFFSET.extraWidth}px)`, height: `calc(100% + ${VIDEO_OFFSET.extraHeight}px)`, objectFit: "fill", display: "block", background: "#000" }} autoPlay muted loop playsInline poster="/Fac2.png">
-                    <source src="/Fac3.MP4" type="video/mp4" />
+                    <source src="/Fac3.mp4" type="video/mp4" />
                   </video>
                 </div>
               </div>
