@@ -149,7 +149,8 @@ export default function ConstellationsPage() {
       {/* Content */}
       <div className="p-container-flush">
 
-        <FadeIn className="py-20" style={{ borderBottom: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderBottom: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-20">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>Overview</p>
@@ -163,6 +164,7 @@ export default function ConstellationsPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
         <FadeIn className="py-16">
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--c-card-border)", background: "var(--c-card-bg)" }}>
@@ -172,7 +174,8 @@ export default function ConstellationsPage() {
           <p className="text-[10px] font-mono mt-3 tracking-widest uppercase" style={{ color: "var(--c-text-faint)" }}>GLSL star field — procedural generation</p>
         </FadeIn>
 
-        <FadeIn className="py-16" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-16">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>Constellation Engine</p>
@@ -188,6 +191,7 @@ export default function ConstellationsPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
         <FadeIn className="py-16">
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--c-card-border)", background: "var(--c-card-bg)" }}>
@@ -197,7 +201,8 @@ export default function ConstellationsPage() {
           <p className="text-[10px] font-mono mt-3 tracking-widest uppercase" style={{ color: "var(--c-text-faint)" }}>Constellation lines — animated reveal</p>
         </FadeIn>
 
-        <FadeIn className="py-16" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-16">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>Exploration Modes</p>
@@ -221,6 +226,7 @@ export default function ConstellationsPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
         <FadeIn className="py-16">
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--c-card-border)", background: "var(--c-card-bg)" }}>
@@ -230,7 +236,8 @@ export default function ConstellationsPage() {
           <p className="text-[10px] font-mono mt-3 tracking-widest uppercase" style={{ color: "var(--c-text-faint)" }}>Mouse parallax — depth illusion</p>
         </FadeIn>
 
-        <FadeIn className="py-16" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="py-16">
           <div className="p-grid-sidebar">
             <div>
               <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-3" style={{ color: "var(--c-text-muted)" }}>Technical Excellence</p>
@@ -250,6 +257,7 @@ export default function ConstellationsPage() {
             </div>
           </div>
         </FadeIn>
+        </div>
 
         <FadeIn className="py-16 border-t border-gray-100">
           <p className="text-[9px] font-mono tracking-[0.35em] uppercase mb-12 text-center" style={{ color: "var(--c-text-muted)" }}>Demo</p>
@@ -267,7 +275,8 @@ export default function ConstellationsPage() {
           <p className="text-[10px] font-mono text-center mt-4 tracking-widest uppercase" style={{ color: "var(--c-text-faint)" }}>Full interactive demo</p>
         </FadeIn>
 
-        <FadeIn className="pt-20 pb-8" style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <div style={{ borderTop: "1px solid var(--c-border-light)" }}>
+        <FadeIn className="pt-20 pb-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <BackButton />
             <a href="https://github.com/rizoshomatov" target="_blank" rel="noopener noreferrer"
@@ -280,6 +289,7 @@ export default function ConstellationsPage() {
             </a>
           </div>
         </FadeIn>
+        </div>
 
         <div className="h-24" />
       </div>
