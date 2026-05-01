@@ -6,16 +6,17 @@ import Link from "next/link";
 
 // ─── Theme Context ────────────────────────────────────────────────────────────
 type Theme = "light" | "dark";
-const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({ theme: "light", toggle: () => {} });
+const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({ theme: "dark", toggle: () => {} });
 const useTheme = () => useContext(ThemeCtx);
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("rizo-theme") as Theme | null;
     if (saved === "dark" || saved === "light") setTheme(saved);
+    else setTheme("dark");
     setMounted(true);
   }, []);
 
@@ -25,10 +26,101 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("rizo-theme", theme);
   }, [theme, mounted]);
 
+  // Сразу ставим data-theme на html до mount, чтобы не было вспышки светлой темы
+  if (typeof window !== "undefined" && !document.documentElement.hasAttribute("data-theme")) {
+    const saved = localStorage.getItem("rizo-theme");
+    document.documentElement.setAttribute("data-theme", saved === "light" ? "light" : "dark");
+  }
+
   const toggle = useCallback(() => setTheme(t => t === "light" ? "dark" : "light"), []);
 
   return <ThemeCtx.Provider value={{ theme, toggle }}>{children}</ThemeCtx.Provider>;
 }
+
+// ─── Language Context ─────────────────────────────────────────────────────────
+type Lang = "en" | "ru";
+const LangCtx = createContext<{ lang: Lang; toggleLang: () => void }>({ lang: "en", toggleLang: () => {} });
+const useLang = () => useContext(LangCtx);
+
+function LangProvider({ children }: { children: React.ReactNode }) {
+  const [lang, setLang] = useState<Lang>("en");
+  useEffect(() => {
+    const saved = localStorage.getItem("rizo-lang") as Lang | null;
+    if (saved === "en" || saved === "ru") setLang(saved);
+  }, []);
+  const toggleLang = useCallback(() => {
+    setLang(l => {
+      const next = l === "en" ? "ru" : "en";
+      localStorage.setItem("rizo-lang", next);
+      return next;
+    });
+  }, []);
+  return <LangCtx.Provider value={{ lang, toggleLang }}>{children}</LangCtx.Provider>;
+}
+
+// ─── Translations ─────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    availableForWork: "Creative Technologist · Available for work",
+    subtitle: "Frontend · Animation · GameDev · UI/UX",
+    viewWork: "View Work",
+    contact: "Contact",
+    aboutLabel: "About",
+    aboutText: "Hi there! I'm a Frontend Engineer & Creative Developer. Commercial developer with 3 years of experience. I specialize in the intersection of",
+    aboutStrong1: "scalable frontend architecture",
+    aboutAnd: "and",
+    aboutStrong2: "real-time computer graphics.",
+    navWork: "Work",
+    navAnimation: "Animation",
+    navDesign: "Design",
+    navContact: "Contact",
+    sectionFrontend: "Frontend Development",
+    sectionAnimation: "Animation",
+    sectionWebsite: "Website",
+    sectionDesign: "Design",
+    sectionContact: "Contact",
+    open: "Open →",
+    sendMessage: "Send a message",
+    socials: "Socials",
+    freelance: "Freelance",
+    builtWith: "Built with Next.js · Framer Motion · Tailwind CSS",
+    letsBuild: "Let's build",
+    something: "something.",
+    web1Title: "Creating an artist's website",
+    web2Title: "Creating an organization's website",
+    bubbleMessages: ["Hi there! 👋", "My name is Rizo.", "Welcome to my portfolio site!", "I'd love to help you.", "You can reach me via the contacts at the bottom of the page.", "Let's build something. 🚀"],
+  },
+  ru: {
+    availableForWork: "Креативный Технолог · Открыт к работе",
+    subtitle: "Фронтенд · Анимация · Геймдев · UI/UX",
+    viewWork: "Смотреть работы",
+    contact: "Контакты",
+    aboutLabel: "Обо мне",
+    aboutText: "Привет! Я Frontend-разработчик и Креативный Девелопер. Коммерческий разработчик с 3-летним опытом. Специализируюсь на пересечении",
+    aboutStrong1: "масштабируемой фронтенд-архитектуры",
+    aboutAnd: "и",
+    aboutStrong2: "компьютерной графики в реальном времени.",
+    navWork: "Работы",
+    navAnimation: "Анимации",
+    navDesign: "Дизайн",
+    navContact: "Контакты",
+    sectionFrontend: "Frontend Разработка",
+    sectionAnimation: "Анимация",
+    sectionWebsite: "Веб-сайты",
+    sectionDesign: "Дизайн",
+    sectionContact: "Контакты",
+    open: "Открыть →",
+    sendMessage: "Написать письмо",
+    socials: "Соцсети",
+    freelance: "Фриланс",
+    builtWith: "Создано на Next.js · Framer Motion · Tailwind CSS",
+    letsBuild: "Давайте создадим",
+    something: "что-то крутое.",
+    web1Title: "Создание сайта для художника",
+    web2Title: "Создание сайта для организации",
+    bubbleMessages: ["Привет! 👋", "Меня зовут Ризо.", "Добро пожаловать в моё портфолио!", "Рад помочь вам.", "Связаться можно через контакты внизу страницы.", "Создадим что-то крутое. 🚀"],
+  },
+};
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const FRONTEND_PROJECTS = [
@@ -110,34 +202,22 @@ const FREELANCE = [
 ];
 
 // ─── Speech Bubble ────────────────────────────────────────────────────────────
-const BUBBLE_MESSAGES = [
-  "Hi there! 👋",
-  "My name is Rizo.",
-  "Welcome to my portfolio site!",
-  "I'd love to help you.",
-  "You can reach me via the contacts at the bottom of the page.",
-  "Let's build something. 🚀",
-];
 
 function SpeechBubble() {
+  const { lang } = useLang();
+  const BUBBLE_MESSAGES = T[lang].bubbleMessages;
   const [msgIndex, setMsgIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [phase, setPhase] = useState<"hidden" | "typing" | "pause" | "fadeout">("hidden");
   const [opacity, setOpacity] = useState(0);
 
-  // Запуск / перезапуск цикла
-  const startCycle = () => {
+  // Reset when language changes
+  useEffect(() => {
     setMsgIndex(0);
     setDisplayed("");
     setPhase("typing");
     setOpacity(1);
-  };
-
-  // Первый запуск
-  useEffect(() => {
-    const t = setTimeout(startCycle, 1400);
-    return () => clearTimeout(t);
-  }, []);
+  }, [lang]);
 
   // Машина состояний
   useEffect(() => {
@@ -166,7 +246,12 @@ function SpeechBubble() {
       // Плавно скрываем
       setOpacity(0);
       // Через 10 сек перезапускаем
-      const t = setTimeout(startCycle, 10000);
+      const t = setTimeout(() => {
+        setMsgIndex(0);
+        setDisplayed("");
+        setPhase("typing");
+        setOpacity(1);
+      }, 10000);
       return () => clearTimeout(t);
     }
   }, [phase, displayed, msgIndex]);
@@ -242,6 +327,8 @@ function SpeechBubble() {
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle } = useTheme();
+  const { lang, toggleLang } = useLang();
+  const t = T[lang];
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", h);
@@ -266,13 +353,31 @@ function Nav() {
         <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: "0.05em", color: "var(--c-text-primary)" }}>Rizo</span>
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           <div className="hidden md:flex gap-6">
-            {[["Work", "#frontend"], ["Animation", "#animation"], ["Design", "#design"], ["Contact", "#contact"]].map(([l, h]) => (
+            {[[t.navWork, "#frontend"], [t.navAnimation, "#animation"], [t.navDesign, "#design"], [t.navContact, "#contact"]].map(([l, h]) => (
               <a key={l} href={h} style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--c-text-muted)", transition: "color 0.2s", textDecoration: "none" }}
                 onMouseEnter={e => (e.currentTarget.style.color = "var(--c-text-primary)")}
                 onMouseLeave={e => (e.currentTarget.style.color = "var(--c-text-muted)")}>{l}</a>
             ))}
           </div>
-          {/* Theme toggle */}
+          {/* Language toggle */}
+          <button
+            onClick={toggleLang}
+            aria-label="Toggle language"
+            style={{
+              height: 36, padding: "0 10px", borderRadius: 18,
+              border: "1px solid var(--c-border)",
+              background: "var(--c-card-bg)",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
+              cursor: "pointer", transition: "all 0.3s",
+              fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
+              fontFamily: "monospace",
+            }}
+          >
+            <span style={{ color: lang === "en" ? "var(--c-text-primary)" : "var(--c-text-muted)" }}>EN</span>
+            <span style={{ color: "var(--c-text-faint)", fontWeight: 400 }}>/</span>
+            <span style={{ color: lang === "ru" ? "var(--c-text-primary)" : "var(--c-text-muted)" }}>RU</span>
+          </button>
+          {/* Theme toggle — moon when dark, sun when light */}
           <button
             onClick={toggle}
             aria-label="Toggle theme"
@@ -286,11 +391,13 @@ function Nav() {
               fontSize: 16,
             }}
           >
-            {theme === "light" ? (
+            {theme === "dark" ? (
+              /* Луна — тёмная тема активна */
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
             ) : (
+              /* Солнце — светлая тема активна */
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="5"/>
                 <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
@@ -359,6 +466,8 @@ const BUBBLE_MOBILE = {
 };
 
 function Hero() {
+  const { lang } = useLang();
+  const t = T[lang];
   return (
     <section className="min-h-screen flex flex-col justify-center overflow-hidden" style={{ background: "var(--c-bg-primary)" }}>
       <div className="rizo-hero-inner">
@@ -400,7 +509,7 @@ function Hero() {
               className="font-mono"
               style={{ fontSize: 12, letterSpacing: "0.3em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", paddingTop: 20, paddingBottom: 20 }}
             >
-              Creative Technologist · Available for work
+              {t.availableForWork}
             </motion.p>
 
             <div className="overflow-hidden mb-3">
@@ -423,7 +532,7 @@ function Hero() {
                 className="font-light"
                 style={{ fontSize: "clamp(1rem,3vw,2rem)", color: "var(--c-text-muted)", letterSpacing: "-0.025em" }}
               >
-                Frontend · Animation · GameDev · UI/UX
+                {t.subtitle}
               </motion.p>
             </div>
 
@@ -439,13 +548,13 @@ function Hero() {
                 style={{ background: "var(--c-btn-primary)", color: "var(--c-btn-primary)", transition: "color 0.2s" }}
                 onMouseEnter={e => { e.currentTarget.style.color = "var(--c-btn-primary-text)"; }}
                 onMouseLeave={e => { e.currentTarget.style.color = "var(--c-btn-primary)"; }}>
-                View Work
+                {t.viewWork}
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1.5 6.5h10M6.5 1.5l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </a>
               <a href="#contact"
                 className="inline-flex items-center gap-2 text-xs tracking-widest uppercase px-7 py-3.5 transition-colors duration-200"
                 style={{ border: "1px solid var(--c-border)", color: "var(--c-text-secondary)" }}>
-                Contact
+                {t.contact}
               </a>
             </motion.div>
           </div>
@@ -464,12 +573,11 @@ function Hero() {
           className="pt-8 rizo-grid-2-lg rizo-about"
         >
           <div>
-            <p className="font-mono" style={{ fontSize: 9, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", marginBottom: 16 }}>About</p>
+            <p className="font-mono" style={{ fontSize: 9, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", marginBottom: 16 }}>{t.aboutLabel}</p>
             <p style={{ fontSize: 18, color: "var(--c-text-secondary)", lineHeight: 1.7 }}>
-              Hi there! I&apos;m a Frontend Engineer & Creative Developer. Commercial developer with 3 years of experience.
-              I specialize in the intersection of{" "}
-              <strong style={{ color: "var(--c-text-primary)", fontWeight: 600 }}>scalable frontend architecture</strong> and{" "}
-              <strong style={{ color: "var(--c-text-primary)", fontWeight: 600 }}>real-time computer graphics.</strong>
+              {t.aboutText}{" "}
+              <strong style={{ color: "var(--c-text-primary)", fontWeight: 600 }}>{t.aboutStrong1}</strong> {t.aboutAnd}{" "}
+              <strong style={{ color: "var(--c-text-primary)", fontWeight: 600 }}>{t.aboutStrong2}</strong>
             </p>
           </div>
           <div className="rizo-grid-2-sm">
@@ -500,21 +608,36 @@ function Hero() {
 // ─── Section Header ───────────────────────────────────────────────────────────
 function SectionHeader({ num, title, marginBottom = 56 }: { num: string; title: string; marginBottom?: number }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+  const inView = useInView(ref, { once: false, margin: "-15%" });
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.5 }}
-      style={{ marginBottom }}
-      className="flex items-center gap-4"
-    >
-      <span className="font-mono" style={{ fontSize: 10, color: "var(--c-text-faint)" }}>{num}</span>
-      <div style={{ height: 1, flex: 1, background: "var(--c-border-light)" }} />
-      <span className="font-mono" style={{ fontSize: 10, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-muted)" }}>{title}</span>
-      <div style={{ height: 1, width: 24, background: "var(--c-border-light)" }} />
-    </motion.div>
+    <div ref={ref} style={{ marginBottom, overflow: "hidden" }} className="flex items-center gap-4">
+      <motion.span
+        className="font-mono"
+        initial={{ opacity: 0, x: -40 }}
+        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        style={{ fontSize: 10, color: "var(--c-text-faint)" }}
+      >{num}</motion.span>
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        style={{ height: 1, flex: 1, background: "var(--c-border-light)", transformOrigin: "left" }}
+      />
+      <motion.span
+        className="font-mono"
+        initial={{ opacity: 0, x: 60 }}
+        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 60 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+        style={{ fontSize: 10, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-primary)", fontWeight: 600 }}
+      >{title}</motion.span>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        style={{ height: 1, width: 24, background: "var(--c-border-light)" }}
+      />
+    </div>
   );
 }
 
@@ -582,11 +705,13 @@ function ProjectCoverCard({ project, index }: { project: typeof FRONTEND_PROJECT
 function AnimationSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
+  const { lang } = useLang();
+  const t = T[lang];
 
   return (
     <section id="animation" style={{ background: "var(--c-bg-secondary)" }}>
       <div className="rizo-container">
-        <SectionHeader num="03" title="Animation" marginBottom={SECTION_HEADER.animationMarginBottom} />
+        <SectionHeader num="03" title={t.sectionAnimation} marginBottom={SECTION_HEADER.animationMarginBottom} />
         <div ref={ref} className="rizo-grid-2-anim">
           {ANIMATION_WORKS.map((w, i) => (
             <motion.div key={w.title}
@@ -615,6 +740,169 @@ function AnimationSection() {
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+// ─── Website Section ──────────────────────────────────────────────────────────
+const WEBSITE_WORKS = [
+  { src: "/web1.png", titleKey: "web1Title" as const, subImages: ["/web1.1.png", "/web1.2.png"] },
+  { src: "/web2.png", titleKey: "web2Title" as const, subImages: ["/web2.1.png", "/web2.2.png"] },
+];
+
+type WebPreview = { title: string; allImages: string[] };
+
+function WebsiteSection() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+  const [preview, setPreview] = useState<WebPreview | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { lang } = useLang();
+  const t = T[lang];
+
+  const openPreview = (w: typeof WEBSITE_WORKS[0], title: string) => {
+    setPreview({ title, allImages: [w.src, ...w.subImages] });
+  };
+
+  useEffect(() => {
+    if (!preview) return;
+    // Reset scroll to top when opening
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPreview(null);
+    };
+    window.addEventListener("keydown", onKey);
+    // Lock body scroll
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [preview]);
+
+  return (
+    <section id="website" style={{ background: "var(--c-bg-secondary)" }}>
+      <div className="rizo-container">
+        <SectionHeader num="04" title={t.sectionWebsite} marginBottom={SECTION_HEADER.designMarginBottom} />
+        <div ref={ref} className="rizo-grid-2" style={{ gap: "2rem" }}>
+          {WEBSITE_WORKS.map((w, i) => (
+            <motion.div
+              key={w.src}
+              initial={{ opacity: 0, y: 40 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
+              className="group"
+              style={{ cursor: "pointer" }}
+              onClick={() => openPreview(w, t[w.titleKey])}
+            >
+              <div
+                className="relative overflow-hidden rounded-lg"
+                style={{
+                  aspectRatio: "16/10",
+                  background: "var(--c-card-bg)",
+                  border: "1px solid var(--c-border-light)",
+                }}
+              >
+                <img
+                  src={w.src}
+                  alt={t[w.titleKey]}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-all duration-500" />
+                <div className="absolute top-3 right-3 w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ background: "var(--c-bg-primary-alpha)" }}>
+                  <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
+                    <path d="M1.5 6.5h10M6.5 1.5l5 5-5 5" stroke="var(--c-text-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div className="mt-2.5 px-1">
+                <p className="font-mono" style={{ fontSize: 9, letterSpacing: "0.25em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", marginBottom: 2 }}>Web Design</p>
+                <p className="font-semibold leading-snug" style={{ fontSize: 14, color: "var(--c-text-primary)" }}>{t[w.titleKey]}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Website Preview Modal (scroll layout) ── */}
+      {preview && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          onClick={() => setPreview(null)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 9999,
+            background: "rgba(0,0,0,0.88)", backdropFilter: "blur(14px)",
+            display: "flex", flexDirection: "column",
+          }}
+        >
+
+
+          {/* ── Scrollable images ── */}
+          <div
+            ref={scrollRef}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              overflowX: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              padding: "2.5rem 1.5rem 4rem",
+              gap: "2rem",
+              scrollBehavior: "smooth",
+              /* Custom scrollbar */
+              scrollbarWidth: "thin" as const,
+              scrollbarColor: "rgba(255,255,255,0.15) transparent",
+            }}
+          >
+            {preview.allImages.map((src, idx) => (
+              <motion.div
+                key={src}
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: idx * 0.12 }}
+                style={{
+                  width: "100%",
+                  maxWidth: 900,
+                  borderRadius: 10,
+                  overflow: "hidden",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  flexShrink: 0,
+                }}
+              >
+                <img
+                  src={src}
+                  alt={`${preview.title} — screen ${idx + 1}`}
+                  style={{ width: "100%", display: "block", objectFit: "cover" }}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
+              </motion.div>
+            ))}
+
+            {/* Close button at bottom */}
+            <button
+              onClick={() => setPreview(null)}
+              style={{
+                marginTop: "1rem",
+                width: 44, height: 44, borderRadius: "50%",
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.15)",
+                color: "rgba(255,255,255,0.7)", fontSize: 18,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", transition: "all 0.2s", flexShrink: 0,
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.15)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)"; }}
+            >✕</button>
+          </div>
+        </motion.div>
+      )}
     </section>
   );
 }
@@ -669,6 +957,8 @@ function DesignSection() {
   const [lightbox, setLightbox] = useState<{ src: string; title: string } | null>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const { lang } = useLang();
+  const t = T[lang];
 
   // Закрытие по Escape
   useEffect(() => {
@@ -694,7 +984,7 @@ function DesignSection() {
   return (
     <section id="design" style={{ background: "var(--c-bg-primary)" }}>
       <div className="rizo-container">
-        <SectionHeader num="04" title="Design" marginBottom={SECTION_HEADER.designMarginBottom} />
+        <SectionHeader num="05" title={t.sectionDesign} marginBottom={SECTION_HEADER.designMarginBottom} />
 
         {/* ── Desktop: обычная сетка ── */}
         <div ref={desktopRef} className="rizo-grid-4 rizo-design-desktop">
@@ -833,11 +1123,13 @@ function DesignSection() {
 function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
+  const { lang } = useLang();
+  const t = T[lang];
 
   return (
     <section id="contact" style={{ background: "var(--c-bg-secondary)", borderTop: "1px solid var(--c-border-light)" }}>
       <div ref={ref} className="rizo-container">
-        <SectionHeader num="05" title="Contact" marginBottom={SECTION_HEADER.contactMarginBottom} />
+        <SectionHeader num="06" title={t.sectionContact} marginBottom={SECTION_HEADER.contactMarginBottom} />
 
         <div className="rizo-grid-contact">
           <div>
@@ -848,8 +1140,8 @@ function Contact() {
               className="font-bold"
               style={{ fontSize: "clamp(2.5rem,6vw,5rem)", lineHeight: 0.92, letterSpacing: "-0.03em", color: "var(--c-text-primary)", marginBottom: 32 }}
             >
-              Let&apos;s build<br />
-              <span style={{ color: "var(--c-text-faint)" }}>something.</span>
+              {t.letsBuild}<br />
+              <span style={{ color: "var(--c-text-faint)" }}>{t.something}</span>
             </motion.h2>
             <motion.a href="mailto:rizoshomatov@gmail.com"
               initial={{ opacity: 0 }}
@@ -859,7 +1151,7 @@ function Contact() {
               style={{ background: "var(--c-btn-primary)", color: "var(--c-btn-primary)", transition: "color 0.2s" }}
               onMouseEnter={e => { e.currentTarget.style.color = "var(--c-btn-primary-text)"; }}
               onMouseLeave={e => { e.currentTarget.style.color = "var(--c-btn-primary)"; }}>
-              Send a message
+              {t.sendMessage}
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="group-hover:translate-x-0.5 transition-transform"><path d="M1.5 6.5h10M6.5 1.5l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </motion.a>
           </div>
@@ -871,7 +1163,7 @@ function Contact() {
             className="flex flex-col gap-8"
           >
             <div>
-              <p className="font-mono" style={{ fontSize: 9, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", marginBottom: 12 }}>Socials</p>
+              <p className="font-mono" style={{ fontSize: 9, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", marginBottom: 12 }}>{t.socials}</p>
               {SOCIAL.map(({ label, handle, href }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
                   className="group flex items-center py-3 transition-colors duration-200"
@@ -884,7 +1176,7 @@ function Contact() {
             </div>
 
             <div>
-              <p className="font-mono" style={{ fontSize: 9, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", marginBottom: 12 }}>Freelance</p>
+              <p className="font-mono" style={{ fontSize: 9, letterSpacing: "0.35em", textTransform: "uppercase" as const, color: "var(--c-text-muted)", marginBottom: 12 }}>{t.freelance}</p>
               <div className="flex gap-2 flex-wrap">
                 {FREELANCE.map(({ label, href }) => (
                   <a key={label} href={href} target="_blank" rel="noopener noreferrer"
@@ -898,7 +1190,7 @@ function Contact() {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between gap-2" style={{ marginTop: 64, paddingTop: 24, borderTop: "1px solid var(--c-border-light)" }}>
-          <p className="font-mono" style={{ fontSize: 10, color: "var(--c-text-faint)" }}>Built with Next.js · Framer Motion · Tailwind CSS</p>
+          <p className="font-mono" style={{ fontSize: 10, color: "var(--c-text-faint)" }}>{t.builtWith}</p>
         </div>
       </div>
     </section>
@@ -906,30 +1198,14 @@ function Contact() {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function Page() {
+function PageContent() {
+  const { lang } = useLang();
+  const t = T[lang];
   return (
-    <ThemeProvider>
     <main style={{ background: "var(--c-bg-primary)", color: "var(--c-text-primary)", transition: "background 0.4s ease, color 0.4s ease" }}>
       <style>{`
         /* ── Theme Variables ── */
-        :root, [data-theme="light"] {
-          --c-bg-primary: #ffffff;
-          --c-bg-secondary: #f9fafb;
-          --c-bg-primary-alpha: rgba(255,255,255,0.9);
-          --c-nav-scrolled: rgba(255,255,255,0.8);
-          --c-card-bg: #f9fafb;
-          --c-text-primary: #111827;
-          --c-text-secondary: #374151;
-          --c-text-muted: #9ca3af;
-          --c-text-faint: #d1d5db;
-          --c-border: #e5e7eb;
-          --c-border-light: #f3f4f6;
-          --c-btn-primary: #111827;
-          --c-btn-primary-text: #ffffff;
-          --c-bubble-bg: #ffffff;
-          --c-bubble-border: #111111;
-        }
-        [data-theme="dark"] {
+        :root, [data-theme="dark"] {
           --c-bg-primary: #0f0f0f;
           --c-bg-secondary: #1a1a1a;
           --c-bg-primary-alpha: rgba(15,15,15,0.9);
@@ -945,6 +1221,23 @@ export default function Page() {
           --c-btn-primary-text: #0f0f0f;
           --c-bubble-bg: #1a1a1a;
           --c-bubble-border: #e0e0e0;
+        }
+        [data-theme="light"] {
+          --c-bg-primary: #ffffff;
+          --c-bg-secondary: #f9fafb;
+          --c-bg-primary-alpha: rgba(255,255,255,0.9);
+          --c-nav-scrolled: rgba(255,255,255,0.8);
+          --c-card-bg: #f9fafb;
+          --c-text-primary: #111827;
+          --c-text-secondary: #374151;
+          --c-text-muted: #9ca3af;
+          --c-text-faint: #d1d5db;
+          --c-border: #e5e7eb;
+          --c-border-light: #f3f4f6;
+          --c-btn-primary: #111827;
+          --c-btn-primary-text: #ffffff;
+          --c-bubble-bg: #ffffff;
+          --c-bubble-border: #111111;
         }
         * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
         @keyframes rizo-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -1016,7 +1309,7 @@ export default function Page() {
 
       <section id="frontend" style={{ background: "var(--c-bg-primary)" }}>
         <div className="rizo-container">
-          <SectionHeader num="01 — 02" title="Frontend Development" marginBottom={SECTION_HEADER.frontendMarginBottom} />
+          <SectionHeader num="01 — 02" title={t.sectionFrontend} marginBottom={SECTION_HEADER.frontendMarginBottom} />
           <div className="rizo-grid-2">
             {FRONTEND_PROJECTS.map((p, i) => (
               <ProjectCoverCard key={p.id} project={p} index={i} />
@@ -1026,9 +1319,19 @@ export default function Page() {
       </section>
 
       <AnimationSection />
+      <WebsiteSection />
       <DesignSection />
       <Contact />
     </main>
+  );
+}
+
+export default function Page() {
+  return (
+    <ThemeProvider>
+      <LangProvider>
+        <PageContent />
+      </LangProvider>
     </ThemeProvider>
   );
 }
